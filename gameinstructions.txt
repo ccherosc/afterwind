@@ -1,0 +1,454 @@
+# Afterwind Game Dev Skill
+
+## Purpose
+
+Use this skill when working on the Afterwind / Skywriter browser game in Claude Code.
+
+The goal is to build a lightweight, reliable, browser-based 2D airplane action game with minimal errors, conservative token usage, and no use of large-context or 1M-context tools.
+
+## Absolute Rules
+
+1. Never invoke, enable, request, or depend on any 1M context tool.
+2. Never use large-context expansion unless the user explicitly overrides this skill.
+3. Keep responses concise and implementation-focused.
+4. Prefer editing the smallest relevant files instead of reading the whole project.
+5. Do not scan the full repository unless required.
+6. Do not summarize large files unless directly needed.
+7. Do not rewrite working systems without a clear reason.
+8. Avoid speculative architecture changes.
+9. Always preserve the current playable state unless fixing a broken state.
+
+## Project Context
+
+This is a browser-based 2D arcade airplane game.
+
+Working title:
+Afterwind
+
+Original concept:
+The player controls a small airplane. The player’s flight path is recorded during each round. At the end of the round, that path is analyzed and converted into weather zones for the next round.
+
+Core mechanic:
+Fly today. Change tomorrow’s sky.
+
+The game should feel casual, fast, readable, and addictive.
+
+## Current Asset Context
+
+Kenney Pixel Shmup assets have been purchased and placed in the project’s `assets` folder.
+
+Use those assets for:
+
+* Plane sprites
+* Effects if appropriate
+* UI icons if appropriate
+* Pickups if appropriate
+
+Do not assume asset filenames. Inspect the `assets` folder only as needed.
+
+## Desired Tech Stack
+
+Use:
+
+* HTML
+* CSS
+* Vanilla JavaScript
+* HTML5 Canvas
+* Local browser storage
+
+Avoid unless specifically requested:
+
+* React
+* TypeScript
+* Heavy frameworks
+* Build tools
+* External dependencies
+* Complex state libraries
+
+The game should be easy to host for free on:
+
+* GitHub Pages
+* Cloudflare Pages
+* Netlify
+
+
+## Long-Term Direction
+
+Future features may include:
+
+* Global leaderboard
+* Daily challenge seed
+* Player upgrades
+* Multiple planes
+* Weather history
+* Mobile polish
+
+Do not build backend leaderboard functionality yet unless requested.
+
+For now, design the score system so that a future leaderboard can be added cleanly.
+
+Recommended future leaderboard-friendly score object:
+
+```js
+{
+  playerName,
+  score,
+  dayReached,
+  survivalTime,
+  orbsCollected,
+  weatherRidden,
+  nearMisses,
+  createdAt,
+  gameVersion,
+  seed
+}
+```
+
+## Core Game Files
+
+Prefer this structure:
+
+```text
+index.html
+styles.css
+src/
+  main.js
+  game.js
+  player.js
+  input.js
+  orbs.js
+  weather.js
+  pathAnalyzer.js
+  ui.js
+  assets.js
+assets/
+```
+
+If the project already has a different structure, improve it gradually instead of forcing a full restructure.
+
+## Core Systems
+
+### Player
+
+The player should have:
+
+* x
+* y
+* rotation
+* speed
+* throttle
+* integrity
+* altitude
+* boost state
+
+Movement should be arcade-style, not simulation-heavy.
+
+### Path Recording
+
+Record lightweight path points at a controlled interval, not every frame.
+
+Recommended:
+
+```js
+const PATH_SAMPLE_MS = 100;
+```
+
+Each path point should include:
+
+```js
+{
+  x,
+  y,
+  heading,
+  speed,
+  altitude,
+  time
+}
+```
+
+Do not store unnecessary data.
+
+### Weather Generation
+
+After each round, analyze the recorded path and generate weather zones.
+
+Basic mapping:
+
+* Wide circular movement creates Thermals.
+* Tight repeated circular movement creates Storms.
+* Long straight movement creates Jetstreams.
+* Rapid direction changes create Turbulence.
+* Multiple self-crossings create Lightning Knots later if requested.
+
+### Weather Effects
+
+Weather zones should be readable and simple.
+
+Thermal:
+
+* Helpful
+* Increases altitude
+* Adds score multiplier
+
+Storm:
+
+* Dangerous
+* Damages integrity
+
+Jetstream:
+
+* Pushes plane in a direction
+* Adds speed bonus
+
+Turbulence:
+
+* Disrupts steering
+* Slightly reduces control
+
+## Performance Rules
+
+1. Use requestAnimationFrame.
+2. Avoid expensive per-frame allocations.
+3. Limit particles.
+4. Limit weather zone count.
+5. Cap path history.
+6. Use simple collision checks first.
+7. Avoid pixel-perfect collision.
+8. Use object pools only if performance becomes a problem.
+9. Keep mobile performance in mind.
+
+Recommended caps:
+
+```js
+const MAX_PATH_POINTS = 800;
+const MAX_WEATHER_ZONES = 20;
+const MAX_PARTICLES = 150;
+const MAX_ORBS = 8;
+```
+
+## Mobile Rules
+
+The game should support mobile portrait.
+
+Required:
+
+* Responsive canvas
+* Touch controls
+* Large buttons
+* No tiny UI
+* No required keyboard-only actions
+
+Desktop controls:
+
+* A/D or left/right arrows turn
+* W/S or up/down arrows adjust throttle
+* Space boosts
+
+Mobile controls:
+
+* Left turn button
+* Right turn button
+* Throttle up
+* Throttle down
+* Boost button
+
+## Visual Direction
+
+Use a bright sky background with clean arcade readability.
+
+Use Kenney sprites where helpful, but do not overcomplicate animation.
+
+Recommended visuals:
+
+* Plane sprite rotates toward heading
+* Trail is a translucent line
+* Orbs glow
+* Thermals are soft green circles
+* Storms are dark purple pulsing circles
+* Jetstreams are blue lanes/arrows
+* Turbulence is orange wavy motion
+
+Gameplay readability is more important than visual detail.
+
+## Testing Requirements
+
+When making changes, verify the game actually runs.
+
+Preferred checks:
+
+1. Install dependencies only if the project already uses them.
+2. Run the local dev server.
+3. Open the game in the browser using Claude Code’s available browser/playwright/screenshot tool.
+4. Take screenshots of:
+
+   * Splash screen
+   * Gameplay
+   * Between-day forecast screen
+   * Game over screen
+5. Confirm:
+
+   * No console errors
+   * Plane moves
+   * Orbs can be collected
+   * Timer works
+   * Path trail appears
+   * Weather appears after a round
+   * Weather affects gameplay
+   * Restart works
+
+If a browser screenshot tool is available, use it.
+
+If no browser/screenshot tool is available, say so briefly and run the strongest available local checks instead.
+
+## Code Review Requirements
+
+Before finishing a task, review the changed files for:
+
+* Syntax errors
+* Broken imports
+* Unused functions
+* Accidental duplicate logic
+* Overly large files
+* Unbounded arrays
+* Animation loops accidentally running twice
+* Mobile control conflicts
+* Canvas resizing bugs
+* Asset path errors
+* Console errors
+* LocalStorage failures
+
+Use focused file review. Do not read the entire project unless necessary.
+
+## Token Conservation Rules
+
+1. Read only files needed for the task.
+2. Prefer targeted search over full file dumps.
+3. Use short summaries.
+4. Do not paste entire files back unless requested.
+5. When editing, explain only what changed and how to test it.
+6. If a file is large, inspect relevant functions only.
+7. Avoid repeating project background.
+8. Avoid over-planning.
+
+## Implementation Style
+
+Use simple, readable JavaScript.
+
+Prefer:
+
+* small functions
+* clear constants
+* one responsibility per file
+* explicit game states
+* simple object structures
+
+Avoid:
+
+* clever abstractions
+* huge classes
+* hidden side effects
+* premature optimization
+* unnecessary dependencies
+
+## Game States
+
+Use clear states:
+
+```js
+const GAME_STATE = {
+  SPLASH: "splash",
+  INSTRUCTIONS: "instructions",
+  PLAYING: "playing",
+  FORECAST: "forecast",
+  GAME_OVER: "gameOver"
+};
+```
+
+## Round Structure
+
+The game loop should follow:
+
+```text
+Splash
+Start Day
+Player flies
+Record path
+Collect orbs
+Timer reaches zero
+Analyze path
+Generate weather forecast
+Next Day starts with new weather
+Repeat until crash
+Game Over
+```
+
+## High Score
+
+Use localStorage for now.
+
+Store:
+
+* high score
+* best day reached
+* settings if needed
+
+Do not add backend services until requested.
+
+## Free Hosting Guidance
+
+Keep the project static-host friendly.
+
+Do not require a Node server for production.
+
+Preferred deployment target:
+GitHub Pages
+
+Requirements:
+
+* Relative asset paths
+* No server-only code
+* No environment variables for MVP
+* Game should run by opening `index.html` through a local server
+
+## Global Leaderboard Preparation
+
+Do not implement yet unless requested.
+
+When ready, recommended options:
+
+* Supabase
+* Firebase
+* Cloudflare Workers + D1
+* Netlify Functions
+
+Current code should keep scoring clean and centralized so leaderboard integration is easy later.
+
+## Definition of Done
+
+A task is done only when:
+
+1. The game still launches.
+2. The changed feature works.
+3. There are no obvious console errors.
+4. The code remains simple.
+5. The user receives clear next steps or test instructions.
+6. No 1M context tool was used.
+
+## Response Format
+
+When responding after work, use this format:
+
+```text
+Done.
+
+Changed:
+- ...
+
+Tested:
+- ...
+
+Notes:
+- ...
+```
+
+Keep it brief unless the user asks for detail.

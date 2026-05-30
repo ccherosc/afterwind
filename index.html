@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Afterwind</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="canvasWrap">
+    <canvas id="gameCanvas"></canvas>
+    <div id="touchControls">
+      <div id="touchLeft">
+        <button id="btnLeft" class="touch-btn">◄</button>
+        <button id="btnThrottleDown" class="touch-btn">▼</button>
+      </div>
+      <div id="touchCenter">
+        <button id="btnBoost" class="touch-btn boost">BOOST</button>
+      </div>
+      <div id="touchRight">
+        <button id="btnThrottleUp" class="touch-btn">▲</button>
+        <button id="btnRight" class="touch-btn">►</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

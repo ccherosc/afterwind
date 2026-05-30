@@ -1,0 +1,102 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #0a0a1a;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#canvasWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gameCanvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Touch controls overlay */
+#touchControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  pointer-events: none;
+}
+
+#touchLeft,
+#touchRight {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+#touchCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.touch-btn {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 22px;
+  cursor: pointer;
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+
+.touch-btn:active {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.touch-btn.boost {
+  width: 90px;
+  height: 60px;
+  background: rgba(255, 200, 50, 0.15);
+  border-color: rgba(255, 200, 50, 0.4);
+  color: #ffc832;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.touch-btn.boost:active {
+  background: rgba(255, 200, 50, 0.35);
+}
+
+/* Hide touch controls on desktop */
+@media (hover: hover) and (pointer: fine) {
+  #touchControls {
+    display: none;
+  }
+}
